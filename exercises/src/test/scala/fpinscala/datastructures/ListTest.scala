@@ -3,6 +3,8 @@ package fpinscala.datastructures
 import org.scalatest.{FunSuite, Matchers}
 import List._
 
+import scala.collection.mutable
+
 class ListTest extends FunSuite with Matchers {
 
   test("testDrop") {
@@ -15,11 +17,18 @@ class ListTest extends FunSuite with Matchers {
     drop(List(1), 10) shouldBe Nil
   }
 
-  test("testFoldLeft") {}
+  test("testFoldLeft") {
+    List((1 to 100000):_*)
+//    foldRight(List((1 to 100000):_*), Nil: List[Int])(Cons(_, _))
+  }
 
   test("testMap") {}
 
   test("testInit") {
+    collection.immutable.List(1).init shouldBe collection.immutable.List.empty
+    collection.immutable.List(1, 2).init shouldBe collection.immutable.List(1)
+    collection.immutable.List(1, 2, 3).init shouldBe collection.immutable.List(1, 2)
+
     init(Nil) shouldBe Nil
     init(List(1)) shouldBe Nil
     init(List(1, 2)) shouldBe List(1)
@@ -32,7 +41,11 @@ class ListTest extends FunSuite with Matchers {
     tail(List(1, 2)) shouldBe List(2)
   }
 
-  test("testLength") {}
+  test("testLength") {
+    List.length(Nil) shouldBe 0
+    List.length(List(1)) shouldBe 1
+    List.length(List(1, 2)) shouldBe 2
+  }
 
   test("testSetHead") {
     setHead(Nil, 1) shouldBe List(1)
@@ -49,4 +62,7 @@ class ListTest extends FunSuite with Matchers {
     dropWhile(List(1, 2), (_: Int) < 0) shouldBe List(1, 2)
   }
 
+  test("ex3.8") {
+    foldRight(List(1, 2, 3), Nil:List[Int])(Cons(_, _)) shouldBe List(1, 2, 3)
+  }
 }
