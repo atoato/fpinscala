@@ -73,7 +73,6 @@ object List { // `List` companion object. Contains functions for creating and wo
   }
 
   def init[A](l: List[A]): List[A] = l match {
-//    case Cons(x, Nil) => Nil
     case Cons(x, xs) if xs != Nil => Cons(x, init(xs))
     case _                        => Nil
   }
@@ -83,7 +82,61 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(x, xs) => 1 + length(xs)
   }
 
-  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  @annotation.tailrec
+  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+    case Nil         => z
+    case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
+  }
 
-  def map[A, B](l: List[A])(f: A => B): List[B] = ???
+  def sum3(ints: List[Int]) = {
+    foldLeft(ints, 0)(_ + _)
+  }
+
+  def product3(ints: List[Int]) = {
+    foldLeft(ints, 1)(_ * _)
+  }
+
+  def length3[A](l: List[A]) = {
+    foldLeft(l, 0) { case (acc, _) => acc + 1 }
+  }
+
+  def reverse[A](l: List[A]) = {
+    foldLeft(l, Nil: List[A]) { case (acc, x) => Cons(x, acc) }
+  }
+
+  def foldLeftWithFoldRight[A, B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  def foldRightWithFoldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B = ???
+
+  def appendWithFold[A](a1: List[A], a2: List[A]): List[A] =
+    foldRight(a1, a2)(Cons(_, _))
+
+  def concat[A](l: List[List[A]]): List[A] = {
+    foldRight(l, Nil: List[A])(append)
+  }
+
+  def addOne(l: List[Int]) = foldRight(l, Nil: List[Int]) {
+    case (x, acc) => Cons(x + 1, acc)
+  }
+
+  def doublesToString(l: List[Double]) = foldRight(l, Nil: List[String]) {
+    case (x, acc) => Cons(x.toString, acc)
+  }
+
+  def map[A, B](as: List[A])(f: A => B): List[B] = foldRight(as, Nil: List[B]) {
+    case (a, acc) => Cons(f(a), acc)
+  }
+
+  def filter[A](as: List[A])(f: A => Boolean): List[A] =
+    foldRight(as, Nil: List[A]) {
+      case (a, acc) =>
+        if (f(a)) Cons(a, acc) else acc
+    }
+
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = concat(map(as)(f))
+
+  def flatMapFilter[A](as: List[A])(f: A => Boolean): List[A] =
+    flatMap(as)(a => if (f(a)) List(a) else Nil)
+
+  def addInts[Int](as: List[Int], bs: List[Int]): List[Int] =
+
 }
